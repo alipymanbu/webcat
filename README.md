@@ -1,123 +1,26 @@
 # webcat
 
-Mad science p2p pipe across the web using webrtc that uses your Github private/public key for authentication and a [signalhub](https://github.com/mafintosh/signalhub) for discovery
+本仓库是「webcat」的安卓版本获取入口，附使用资料索引。
 
-We also want to support other key hosts beyond Github. If you have suggestions or want to help implement this check out [this issue](https://github.com/mafintosh/webcat/issues/5).
+## 安装文件资源（夸克网盘）
 
-```
-npm install -g webcat
-```
+> **webcat 安装文件资源（夸克网盘）**：[https://pan.quark.cn/s/894fd40bde5e](https://pan.quark.cn/s/894fd40bde5e)
 
-If you have trouble getting it to compile try following the [wrtc install instructions](https://github.com/js-platform/node-webrtc#prerequisites)
+## 官方项目
 
-## Usage
+- 上游项目：[mafintosh/webcat](https://github.com/mafintosh/webcat)
 
-webcat lets you establish a p2p pipe to other github users over the web.
-Let's say I wanted to connect to [@maxogden](https://github.com/maxogden)
+## 更多资料
 
-First I need to configure webcat once
+- [下载与安装教程](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/webcat/%E4%B8%8B%E8%BD%BD%E4%B8%8E%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.md)
+- [代码导出与共享空间使用](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/webcat/%E4%BB%A3%E7%A0%81%E5%AF%BC%E5%87%BA%E4%B8%8E%E5%85%B1%E4%BA%AB%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8.md)
+- [常见问题与故障排查](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/webcat/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5.md)
+- [新建项目与运行预览教程](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/webcat/%E6%96%B0%E5%BB%BA%E9%A1%B9%E7%9B%AE%E4%B8%8E%E8%BF%90%E8%A1%8C%E9%A2%84%E8%A7%88%E6%95%99%E7%A8%8B.md)
+- [旧版和WebCatX新版怎么选](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/webcat/%E6%97%A7%E7%89%88%E5%92%8CWebCatX%E6%96%B0%E7%89%88%E6%80%8E%E4%B9%88%E9%80%89.md)
+- [网页打包成安卓App教程](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/webcat/%E7%BD%91%E9%A1%B5%E6%89%93%E5%8C%85%E6%88%90%E5%AE%89%E5%8D%93App%E6%95%99%E7%A8%8B.md)
+- [项目文件存在手机哪个文件夹](https://github.com/alipymanbu/Android/blob/master/%E5%AE%98%E7%BD%91%E7%89%88APP%E4%B8%8B%E8%BD%BD/webcat/%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E5%AD%98%E5%9C%A8%E6%89%8B%E6%9C%BA%E5%93%AA%E4%B8%AA%E6%96%87%E4%BB%B6%E5%A4%B9.md)
+- [全部软件目录](https://github.com/alipymanbu/Android/blob/master/%E5%85%A8%E9%83%A8%E8%BD%AF%E4%BB%B6%E7%9B%AE%E5%BD%95.md)
 
-```
-webcat --configure
-Enter your github username: mafintosh
-```
+---
 
-Then on my machine I run
-
-```
-webcat maxogden
-hello max
-```
-
-On Max's machine he runs
-
-```
-webcat mafintosh
-hi mathias
-```
-
-webcat will create a p2p pipe between connect me and max by using a [signalhub](https://github.com/mafintosh/signalhub) to exchange webrtc metadata
-and Github private/public keys to authenticate that Max is actually [@maxogden](https://github.com/maxogden) and that I am actually [@mafintosh](https://github.com/mafintosh)
-
-On my machine my prompt now looks like
-
-```
-webcat maxogden
-hello max
-hi mathias
-```
-
-And on Max's machine it now looks like
-
-```
-webcat mafintosh
-hi mathias
-hello max
-```
-
-## How it works
-
-webcat works the following way
-
-1. First you sign a message that says you want to connect to another user using your Github private key
-2. You post this message to a known [signalhub](https://github.com/mafintosh/signalhub) in the channel /{another-username}
-3. The other user does the same thing only they posts it to the channel /{my-username}
-4. One of you receives the connect message and verifies that it came from the right person by looking up the other users public key using https://github.com/{another-username}.keys (and this will work in the browser if Github adds CORS GET to this API!)
-5. You then create a webrtc signal handshake, sign it and post it to the other user's lobby
-6. The other user receives this and posts back a signed version of their signaling data
-7. You use this data to establish a secure webrtc connection between eachother that is encrypted using DTLS
-8. You are now connected :)
-
-**warning**. we invented the first 6 parts of this scheme. it has not been properly peer reviewed so use at your own risk :)
-
-we use the following crypto dependencies:
-
-* openssl from node core (rsa signing and https for fetching public keys)
-* dtls from webrtc
-
-## Use cases
-
-You can use webcat to pipe files across the internet!
-
-On my machine
-
-```
-webcat maxogden < some-file
-```
-
-On Max's machine
-
-```
-webcat mafintosh > some-file
-```
-
-## Pipe to yourself
-
-Assuming you have your github key on two different machines you can also open and pipe between them by using the same username.
-
-On one machine connected to the internet that has your Github key
-
-```
-echo machine one | webcat mafintosh
-```
-
-On another machine connected to the internet that has your Github key
-
-```
-echo machine two | webcat mafintosh
-```
-
-## Programmatic usage
-
-You can use webcat from node as well.
-
-``` js
-var webcat = require('webcat')
-
-var stream = webcat('mafintosh') // put in the name of the person you want to talk to
-process.stdin.pipe(stream).pipe(process.stdout)
-```
-
-## License
-
-MIT
+> 本仓库由上游项目 fork 而来，原始说明见[上游仓库](https://github.com/mafintosh/webcat)。
